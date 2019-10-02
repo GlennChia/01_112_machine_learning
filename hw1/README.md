@@ -2,6 +2,8 @@
 
 ## 1.1 pd.read_csv
 
+### 1.1.1 Reading with no headers
+
 When I iterated through the rows, I found that my first row was skipped. Here is the code that shows the reading
 
 ```python
@@ -32,6 +34,32 @@ Hence, we need to add `header=None`
 Link: https://stackoverflow.com/questions/29287224/pandas-read-in-table-without-headers
 
 ![](assets/02_read_csv_no_header.PNG)
+
+### 1.1.2 Reading with no headers and specifying the columns to be used
+
+Link:https://stackoverflow.com/questions/29287224/pandas-read-in-table-without-headers
+
+```python
+df = pd.read_csv(file_path, header=None, usecols=[3,6])
+```
+
+
+
+## 1.2 Reading .dat files
+
+Link:https://stackoverflow.com/questions/27413843/difficulty-importing-dat-file
+
+```python
+import pandas as pd    
+
+with open('/tmp/invest.dat','r') as f:
+    next(f) # skip first row
+    df = pd.DataFrame(l.rstrip().split() for l in f)
+
+print(df)
+```
+
+
 
 # 2. Numpy functions
 
@@ -117,5 +145,153 @@ array([[1, 2],
 
 ## 2.4 Adding a column of 1s to the vector
 
+Link: https://stackoverflow.com/questions/8486294/how-to-add-an-extra-column-to-a-numpy-array
 
+```python
+x = np.array(df['x'])
+x = np.c_[x, np.ones(len(df))]
+```
+
+## 2.5 Numpy array into df column
+
+Link: https://stackoverflow.com/questions/44424594/converting-numpy-array-into-dataframe-column
+
+- Note: useful to see how they initialize an empty dataframe 
+
+```python
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame()
+
+for i in range(5):
+    arr = np.random.rand(10)
+    df[i] = arr
+```
+
+## 2.6 Inverse a matrix
+
+Link: https://www.tutorialspoint.com/numpy/numpy_inv.htm
+
+- Important part is `y = np.linalg.inv(x) `
+
+```python
+Live Demo
+import numpy as np 
+
+x = np.array([[1,2],[3,4]]) 
+y = np.linalg.inv(x) 
+print x 
+print y 
+print np.dot(x,y)
+'''
+x is:
+[[1 2]                                                                        
+ [3 4]]
+y is:
+[[-2.   1. ]                                                                  
+ [ 1.5 -0.5]]
+The result of the dot product is:
+[[  1.00000000e+00   1.11022302e-16]                                          
+ [  0.00000000e+00   1.00000000e+00]]
+'''
+```
+
+## 2.7 Transpose a vector
+
+Link: https://docs.scipy.org/doc/numpy/reference/generated/numpy.transpose.html
+
+```python
+>>> x = np.arange(4).reshape((2,2))
+>>> x
+array([[0, 1],
+       [2, 3]])
+>>> np.transpose(x)
+array([[0, 2],
+       [1, 3]])
+```
+
+
+
+# 3. Dataframe functions
+
+## 3.1 Error: pandas DataFrame “no numeric data to plot” error
+
+Link: https://stackoverflow.com/questions/31494870/pandas-dataframe-no-numeric-data-to-plot-error
+
+- Why? The data is read as Strings 
+- Solution: Force the data to be floats `df=df.astype(float)`
+
+## 3.2 Plotting Scatter plots 
+
+Link: https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
+
+Method 1: The dataframe way
+
+- `a` and `b` are columns in the dataframe 
+
+```python
+import matplotlib as plt
+df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+df.plot.scatter(x='a', y='b')
+```
+
+- If we want to do different data with different colors on the same plot
+
+```python
+ax = df.plot.scatter(x='a', y='b', color='DarkBlue', label='Group 1');
+df.plot.scatter(x='c', y='d', color='DarkGreen', label='Group 2', ax=ax);
+```
+
+## 3.3 Dropping rows
+
+### 3.3.1 Dropping the last n rows
+
+Link: https://stackoverflow.com/questions/26921651/how-to-delete-the-last-row-of-data-of-a-pandas-dataframe
+
+```python
+# Drop last n rows
+df.drop(df.tail(n).index,inplace=True)
+# Drop first n rows
+df.drop(df.head(n).index,inplace=True) 
+```
+
+### 3.3.2 Delete rows by column value
+
+Link: https://thispointer.com/python-pandas-how-to-drop-rows-in-dataframe-by-conditions-on-column-values/
+
+```python
+print("Delete all rows for which column 'Age' has value 30")
+
+
+# Get names of indexes for which column Age has value 30
+indexNames = dfObj[ dfObj['Age'] == 30 ].index
+
+# Delete these row indexes from dataFrame
+dfObj.drop(indexNames , inplace=True)
+```
+
+## 3.4 Renaming columns
+
+Link: https://cmdlinetips.com/2018/03/how-to-change-column-names-and-row-indexes-in-pandas/
+
+```python
+gapminder.rename(columns={'pop':'population',
+                          'lifeExp':'life_exp',
+                          'gdpPercap':'gdp_per_cap'}, 
+                 inplace=True)
+print(gapminder.columns)
+'''
+Index([u'country', u'year', u'population', u'continent', u'life_exp',
+       u'gdp_per_cap'],
+      dtype='object')
+'''
+gapminder.head(3)
+'''
+       country  year  population continent  life_exp  gdp_per_cap
+0  Afghanistan  1952     8425333      Asia    28.801   779.445314
+1  Afghanistan  1957     9240934      Asia    30.332   820.853030
+2  Afghanistan  1962    10267083      Asia    31.997   853.100710
+'''
+```
 
