@@ -2,3 +2,5 @@
 .ipynb_checkpoints
 submissions
 *.zip
+libsvm-master
+__pycache__
