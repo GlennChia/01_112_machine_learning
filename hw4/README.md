@@ -193,15 +193,15 @@ The state sequence is `{Z, X}`
 
 # Question 3. Clearly describe how to modify the Viterbi algorithm to perform such a new decoding task. (10 points)
 
-We are incorporating knowledge that the observation $x_{i}$ has certain states that does not reach it. The example given is that $y_{i} \neq V$ 
+We are incorporating knowledge that the SPECIFIC observation $x_{i}$ has certain states that does not reach it. The example given is that $y_{i} \neq V$ 
 
 <u>**Step 0: Setting some known facts**</u>
 
-If word = "The", the emission probability from state V (verb) to "The" is 0
+If word = "The" at position i, the emission probability from state V (verb) to "The" is 0
 
-if $x_{k}=The$: 
+if $x_{i}=The$: 
 
-​	$b_{u=V}(x_{k})=0$
+​	$b_{u=V}(x_{i})=0$
 
 <u>**Step 1: Initialization (This step still remains the same)**</u>
 
@@ -214,9 +214,9 @@ if $x_{k}=The$:
 >
 > ​	At a layer j+1,
 >
-> ​		if x<sub>j+1</sub> == "The":
+> ​		if x<sub>j+1</sub> == "The" and j+1 == i:
 >
-> ​			$\pi(j+1, u) = 0$ (We do this because we know that the emission probability is 0 and this saves computation time)
+> ​			$\pi(j+1, u) = 0$ (We do this because we know that the emission probability is 0 and this saves computation time. This is run only if the 2 conditions are met)
 >
 > ​		else:
 >
@@ -230,9 +230,9 @@ $\pi(n+1, STOP) = max_{v}\{\pi(n,v) \cdot a_{v,u}\}$
 
 We consider the final layer first
 
->  if x<sub>n</sub> == "The":
+>  if x<sub>n</sub> == "The" and n==i:
 >
-> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,STOP}\}$
+> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,STOP}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
 >
 > else:
 >
@@ -240,10 +240,61 @@ We consider the final layer first
 
 Then we consider the rest of the layers
 
->  if x<sub>n</sub> == "The":
+>  if x<sub>n</sub> == "The" and n==i:
 >
-> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,y^{*}_{j+1}}\}$
+> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,y^{*}_{j+1}}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
 >
 > else:
 >
 > ​	$y_{n}^{*} = argmax_{v}\{\pi(n,v)\cdot a_{v,y^{*}_{j+1}}\}$
+
+
+
+# Question 4. Clearly define the forward and backward scores in a way analogous to HMM. Give algorithms for computing the forward and backward scores. Analyze the time complexity associated with your algorithms (10points)
+
+This is an unsupervised problem as we are only given the observation states. Thus, we require a forward backward algorithm to first find the counts (E step) before we can proceed to the M step.
+
+<u>**Formulating the problem**</u>
+
+$p(x_{1}, x_{2}, ..., x_{j-1}, y_{1}, y_{2}, ..., y_{j-1}, z_{j}=u, x_{j}, x_{j+1},...,x_{n}, y_{j}, y_{j+1},...,y_{n}; \theta)$
+
+= $p(x_{1}, x_{2}, ..., x_{j-1}, y_{1}, y_{2}, ..., y_{j-1}, z_{j}=u; \theta)$ x $p(x_{j}, x_{j+1},...,x_{n}, y_{j}, y_{j+1},...,y_{n} | z_{j}=u; \theta)$
+
+= $\alpha_{u}(j) \cdot \beta_{u}(j)$
+
+Where $\alpha_{u}(j)$ is the forward probability and $\beta_{u}(j)$ is the backward probability.
+
+<u>**Solving for alpha and beta**</u>
+
+**Solving for alpha - Forward**
+
+$\alpha_{u}(j+1) = \sum_{v} \alpha_{v}(j)\alpha_{v,u}\beta_{v}(x_{j})$
+
+With base case $\alpha_{u}(1) = \alpha_{START,u}$
+
+**Solving for beta - Backward**
+
+$\beta_{u}(j) = \sum_{v} a_{u,v}b_{u}(x_{j})b_{u}(y_{j})\beta_{v}(x_{j+1})$
+
+This time we add an extra term because we must also emit `y` and this means that we need to include the emission probability for $y_{j}$
+
+With base case  
+
+$\beta_{u}(n) = a_{u,STOP}b_{u}(x_{n})b_{u}(y_{n})$
+
+Again, for the base case we need to add an additional emission probability 
+
+<u>**Complexity analysis**</u> 
+
+Overall: O(nT<sup>2</sup>) for an observation pair
+
+- Where T is the set of possible states 
+- n is the length of the observation pair sequence
+
+**Forward algorithm**
+
+For each layer, and for each state, we have to compute with T other such states which gives T<sup>2</sup> possibilities. This is multiplied by n which is the length of the observation pair sequence. Hence O(nT<sup>2</sup>)
+
+For the backward the same logic applies and we get O(nT<sup>2</sup>)
+
+Overall it is O(2nT<sup>2</sup>) which can be simplified to O(nT<sup>2</sup>) since we are using big O notation
