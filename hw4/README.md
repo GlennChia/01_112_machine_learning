@@ -1,3 +1,7 @@
+# Glenn Chia 1003118
+
+01.112 Machine Learning Homework 4
+
 # Question 1: Clearly state what are the parameters associated with the HMM. Under the maximum likelihood estimation (MLE), what would be the values for the optimal model parameters? Clearly show how each parameter is estimated exactly. (10 points)
 
 ## 1.1 Parameters associated with MLE
@@ -40,12 +44,12 @@ Estimates for transition probabilities $a_{u, v}$
 
 - $a_{u, v} = \frac{count(u, v)}{count(u)}$ 
 
-| u\v   | X           | Y         | Z           | STOP        |
-| ----- | ----------- | --------- | ----------- | ----------- |
-| START | 2/5 = 0.4   | 0/5 = 0   | 3/5 = 0.6   | 0/5 = 0     |
-| X     | 0/6 = 0     | 3/6 = 0.5 | 2/6 = 0.333 | 1/6 = 0.166 |
-| Y     | 1/6 = 0.166 | 0/6 = 0   | 1/6 = 0.166 | 4/6 = 0.667 |
-| Z     | 3/6 = 0.5   | 3/6 = 0.5 | 0/6 = 0     | 0/6 = 0     |
+| u\v   | X           | Y         | Z                 | STOP        |
+| ----- | ----------- | --------- | ----------------- | ----------- |
+| START | 2/5 = 0.4   | 0/5 = 0   | 3/5 = 0.6         | 0/5 = 0     |
+| X     | 0/6 = 0     | 3/6 = 0.5 | 2/6 = 1/3 = 0.333 | 1/6 = 0.166 |
+| Y     | 1/6 = 0.166 | 0/6 = 0   | 1/6 = 0.166       | 4/6 = 0.667 |
+| Z     | 3/6 = 0.5   | 3/6 = 0.5 | 0/6 = 0           | 0/6 = 0     |
 
 <u>**Emission probability calculations $b_{u}(o)$**</u>
 
@@ -63,11 +67,11 @@ Estimates for Emission probabilities $b_{u} (o)$
 
 - $b_{u} (o)= \frac{count(u ->o)}{count(u)}$ 
 
-| u\o  | a            | b            | c            |
-| ---- | ------------ | ------------ | ------------ |
-| X    | 1/6 = 0.166  | 3/6 = 0.5    | 2/6 = 0. 333 |
-| Y    | 2/6 = 0. 333 | 0/6 = 0      | 4/6 = 0.667  |
-| Z    | 1/6 = 0.166  | 2/6 = 0. 333 | 3/6 = 0.5    |
+| u\o  | a                | b            | c            |
+| ---- | ---------------- | ------------ | ------------ |
+| X    | 1/6 = 0.166      | 3/6 = 0.5    | 2/6 = 0. 333 |
+| Y    | 2/6 = 1/3 =0.333 | 0/6 = 0      | 4/6 = 0.667  |
+| Z    | 1/6 = 0.166      | 2/6 = 0. 333 | 3/6 = 0.5    |
 
 
 
@@ -101,9 +105,15 @@ $\pi(1, u)$ = $max_{v}\{\pi(j,v) \cdot b_{u}(x_{j+1}) \cdot a_{v,u}\}$ = $\pi(0,
 
 | v    | $\pi(j,v) \cdot b_{u}(x_{j+1}) \cdot a_{v,u}$ |
 | ---- | --------------------------------------------- |
-| x    | 1 x 0.5 x 0.4 = 0.2                           |
+| x    | 1 x 0.5 x 0.4 = 1/5 = 0.2                     |
 | y    | 1 x 0 x 0 = 0                                 |
-| z    | 1 x 1/3 x 0.6 = 0.2                           |
+| z    | 1 x 1/3 x 0.6 = 1/5 = 0.2                     |
+
+$\pi(1, X)=\frac{1}{5}$
+
+$\pi(1, Y)=0$
+
+$\pi(1, Z)=\frac{1}{5}$
 
 Updated weight diagram
 
@@ -119,7 +129,7 @@ $\pi(2, u)$ = $max_{v}\{\pi(j,v) \cdot b_{u}(x_{j+1}) \cdot a_{v,u}\}$ = $max_{v
 | ---- | ---- | ------------------------------------------- |
 | X    | X    | 0.2 x  0.5 x 0 = 0                          |
 | X    | Y    | 0 x 0.5 x 1/6 = 0                           |
-| X    | Z    | 0.2 x  0.5 x 0.5 = 0.05                     |
+| X    | Z    | 0.2 x  0.5 x 0.5 = 1/20 = 0.05              |
 | Y    | X    | 0.2 x 0 x 0.5 = 0                           |
 | Y    | Y    | 0 x 0 x 0 = 0                               |
 | Y    | Z    | 0.2 x 0 x 0.5 = 0                           |
@@ -131,9 +141,15 @@ From this table we can find the max
 
 | u    | $max_{v}\{\pi(1,v) \cdot b_{u}(x_{b}) \cdot a_{v,u}\}$ |
 | ---- | ------------------------------------------------------ |
-| X    | 0.05                                                   |
+| X    | 1/20 = 0.05                                            |
 | Y    | 0                                                      |
 | Z    | 1/45                                                   |
+
+$\pi(2, X)=\frac{1}{20}$
+
+$\pi(2, Y)=0$
+
+$\pi(2, Z)=\frac{1}{45}$
 
 Update the weights
 
@@ -154,6 +170,8 @@ $\pi(3, STOP)$ = $max_{v}\{\pi(n,v) \cdot a_{v,u}\}$ = $max_{v}\{\pi(2,v) \cdot 
 | STOP | Z    | 1/45 x 0 = 0                |
 
 Hence, taking the max we get 1/120 
+
+$\pi(3, STOP)=\frac{1}{120}$
 
 Update the weights
 
@@ -212,41 +230,43 @@ if $x_{i}=The$:
 
 > For j = 0 … n − 1, for each u ∈ T
 >
-> ​	At a layer j+1,
+> ​    At a layer j+1,
 >
-> ​		if x<sub>j+1</sub> == "The" and j+1 == i:
+> ​        if x<sub>j+1</sub> == "The" and j+1 == i:
 >
-> ​			$\pi(j+1, u) = 0$ (We do this because we know that the emission probability is 0 and this saves computation time. This is run only if the 2 conditions are met)
+> ​            $\pi(j+1, u) = 0$ (We do this because we know that the emission probability is 0 and this saves computation time. This is run only if the 2 conditions are met)
 >
-> ​		else:
+> ​	    else:
 >
-> ​			$\pi(v, u) = max_{v}\{\pi(j,v) \cdot b_{u}(x_{j+1}) \cdot a_{v,u}\}$
+> ​            $\pi(j+1, u) = max_{v}\{\pi(j,v) \cdot b_{u}(x_{j+1}) \cdot a_{v,u}\}$
 
 <u>**Step 3: This is the same**</u>
 
-$\pi(n+1, STOP) = max_{v}\{\pi(n,v) \cdot a_{v,u}\}$
+$\pi(n+1, STOP) = max_{v}\{\pi(n,v) \cdot a_{v,STOP}\}$
 
-<u>**Step 4: Once the weights are chosen, we need to choose the highest scoring path**</u> 
+<u>**Step 4: Once the weights are chosen, we need to choose the highest scoring path - backtracking**</u> 
 
 We consider the final layer first
 
 >  if x<sub>n</sub> == "The" and n==i:
 >
-> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,STOP}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
+> ​    $y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,STOP}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
 >
 > else:
 >
-> ​	$y_{n}^{*} = argmax_{v}\{\pi(n,v)\cdot a_{v,STOP}\}$
+> ​    $y_{n}^{*} = argmax_{v}\{\pi(n,v)\cdot a_{v,STOP}\}$
 
 Then we consider the rest of the layers
 
->  if x<sub>n</sub> == "The" and n==i:
+>  for j=n-1 ...0:
 >
-> ​	$y_{n}^{*} = argmax_{v\neq V}\{\pi(n,v)\cdot a_{v,y^{*}_{j+1}}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
+>  ​    if x<sub>j</sub> == "The" and j==i:
 >
-> else:
+>  ​        $y_{j}^{*} = argmax_{u\neq V}\{\pi(j,u)\cdot a_{u,y^{*}_{j+1}}\}$ (Since we know that the state cannot be a verb if the word is "The" at position i)
 >
-> ​	$y_{n}^{*} = argmax_{v}\{\pi(n,v)\cdot a_{v,y^{*}_{j+1}}\}$
+>  ​    else:
+>
+>  ​        $y_{j}^{*} = argmax_{u}\{\pi(j,u)\cdot a_{u,y^{*}_{j+1}}\}$
 
 
 
@@ -268,19 +288,33 @@ Where $\alpha_{u}(j)$ is the forward probability and $\beta_{u}(j)$ is the backw
 
 **Solving for alpha - Forward**
 
-$\alpha_{u}(j+1) = \sum_{v} \alpha_{v}(j)\alpha_{v,u}\beta_{v}(x_{j})$
+$\alpha_{u}(j+1) = p(x_{1}, ..., x_{j}, y_{1}, ..., y_{j}, z_{j+1}=u; \theta)$
+
+$= \sum_{v}p(x_{1}, ..., x_{j}, y_{1}, ..., y_{j}, z_{j+1}=u, z_{j}=v)$
+
+$= \sum_{v}p(x_{1}, ..., x_{j-1}, y_{1}, ..., y_{j-1}, z_{j}=v, x_{j}, y_{j}, z_{j+1}=u)$
+
+$= \sum_{v}p(x_{1}, ..., x_{j-1}, y_{1}, ..., y_{j-1}, z_{j}=v) \cdot p(x_{j}, y_{j} | z_{j}=v)\cdot a_{v,u}$
+
+=$\sum_{v} \alpha_{v}(j)a_{v,u}b_{u}(x_{j}, y_{j})$
 
 With base case $\alpha_{u}(1) = \alpha_{START,u}$
 
 **Solving for beta - Backward**
 
-$\beta_{u}(j) = \sum_{v} a_{u,v}b_{u}(x_{j})b_{u}(y_{j})\beta_{v}(x_{j+1})$
+$\beta_{u}(j) = p(x_{j}, ...,x_{n}, y_{j}, ...,y_{n} | z_{j}=u; \theta)$
+
+$=\sum_{v}p(x_{j}, ...,x_{n}, y_{j}, ...,y_{n}, z_{j+1}=v | z_{j}=u)$
+
+$=\sum_{v}p(x_{j}, y_{j}, z_{j+1}=v,x_{j+1}, ...,x_{n}, y_{j+1}, ...,y_{n}  | z_{j}=u)$
+
+$=\sum_{v} a_{u,v}b_{u}(x_{j}, y_{j})\beta_{v}(x_{j+1})$
 
 This time we add an extra term because we must also emit `y` and this means that we need to include the emission probability for $y_{j}$
 
 With base case  
 
-$\beta_{u}(n) = a_{u,STOP}b_{u}(x_{n})b_{u}(y_{n})$
+$\beta_{u}(n) = a_{u,STOP}b_{u}(x_{n}, y_{n})$
 
 Again, for the base case we need to add an additional emission probability 
 
@@ -295,6 +329,10 @@ Overall: O(nT<sup>2</sup>) for an observation pair
 
 For each layer, and for each state, we have to compute with T other such states which gives T<sup>2</sup> possibilities. This is multiplied by n which is the length of the observation pair sequence. Hence O(nT<sup>2</sup>)
 
+**Backward algorithm**
+
 For the backward the same logic applies and we get O(nT<sup>2</sup>)
+
+**Overall**
 
 Overall it is O(2nT<sup>2</sup>) which can be simplified to O(nT<sup>2</sup>) since we are using big O notation
